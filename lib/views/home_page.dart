@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:marcador_truco/models/player.dart';
 
 class HomePage extends StatefulWidget {
@@ -14,7 +15,6 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     _resetPlayers();
-    
   }
 
   void _resetPlayer({Player player, bool resetVictories = true}) {
@@ -43,7 +43,10 @@ class _HomePageState extends State<HomePage> {
                   message:
                       'Tem certeza que deseja começar novamente a pontuação?',
                   confirm: () {
-                    _resetPlayers();
+                    _resetPlayers(resetVictories: true);
+                  },
+                  match: () {
+                    _resetPlayers(resetVictories: false);
                   });
             },
             icon: Icon(Icons.refresh),
@@ -53,6 +56,8 @@ class _HomePageState extends State<HomePage> {
       body: Container(padding: EdgeInsets.all(20.0), child: _showPlayers()),
     );
   }
+
+  //TextEditingController _weightController = TextEditingController();
 
   Widget _showPlayerBoard(Player player) {
     return Expanded(
@@ -86,7 +91,7 @@ class _HomePageState extends State<HomePage> {
     return Text(
       name.toUpperCase(),
       style: TextStyle(
-          fontSize: 22.0,
+          fontSize: 20.0,
           fontWeight: FontWeight.w500,
           color: Colors.deepOrange),
     );
@@ -137,29 +142,41 @@ class _HomePageState extends State<HomePage> {
           text: '-1',
           color: Colors.black.withOpacity(0.1),
           onTap: () {
-            setState(() {
-              player.score--;
-            });
+            if (player.score > 0)
+              setState(() {
+                player.score--;
+              });
           },
         ),
         _buildRoundedButton(
           text: '+1',
           color: Colors.deepOrangeAccent,
           onTap: () {
-            setState(() {
-              player.score++;
-            });
+            if (player.score < 12)
+              setState(() {
+                player.score++;
+              });
+
+              if (_playerOne.score == 11 && _playerTwo.score == 11){
+                _showIronhand(
+                  title: 'Mão de Ferro.',
+                  message: 'que vença o melhor!'
+                );
+              }
 
             if (player.score == 12) {
               _showDialog(
                   title: 'Fim do jogo',
                   message: '${player.name} ganhou!',
-                  confirm: () {
+                  match: () {
                     setState(() {
                       player.victories++;
                     });
 
                     _resetPlayers(resetVictories: false);
+                  },
+                  confirm: () {
+                    _resetPlayers(resetVictories: true);
                   },
                   cancel: () {
                     setState(() {
@@ -173,9 +190,40 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  void _showDialog(
-      {String title, String message, Function confirm, Function cancel}) {
+  void _showIronhand({
+    String title,
+    String message,
+    Function confirm,
+  }) {
     showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text(title),
+            content: Text(message),
+            actions: <Widget>[
+              FlatButton(
+                child: Text("OK"),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  if (confirm != null) confirm();
+                },
+              ),
+            ],
+          );
+        },
+      );
+  }
+
+  void _showDialog(
+      {String title,
+      String message,
+      Function confirm,
+      Function cancel,
+      Function match}) {
+    showDialog(
+      barrierDismissible: false,
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
@@ -190,10 +238,17 @@ class _HomePageState extends State<HomePage> {
               },
             ),
             FlatButton(
-              child: Text("OK"),
+              child: Text("JOGO"),
               onPressed: () {
                 Navigator.of(context).pop();
                 if (confirm != null) confirm();
+              },
+            ),
+            FlatButton(
+              child: Text("PARTIDA"),
+              onPressed: () {
+                Navigator.of(context).pop();
+                if (match != null) match();
               },
             ),
           ],
