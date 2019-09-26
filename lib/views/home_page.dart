@@ -41,7 +41,7 @@ class _HomePageState extends State<HomePage> {
               _showDialog(
                   title: 'Zerar',
                   message:
-                      'Tem certeza que deseja começar novamente a pontuação?',
+                      'Qual pontução pretende zerar?',
                   confirm: () {
                     _resetPlayers(resetVictories: true);
                   },
