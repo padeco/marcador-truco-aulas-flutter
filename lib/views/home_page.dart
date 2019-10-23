@@ -45,7 +45,7 @@ class _HomePageState extends State<HomePage> {
               _showDialog(
                   title: 'Zerar',
                   message:
-                      'Qual pontução pretende zerar?',
+                      'Deseja recomeçar um(a)?',
                   confirm: () {
                     _resetPlayers(resetVictories: true);
                     _playerOne = Player(name: "Nós", score: 0, victories: 0);
@@ -332,14 +332,14 @@ class _HomePageState extends State<HomePage> {
               },
             ),
             FlatButton(
-              child: Text("JOGO"),
+              child: Text("NOVO JOGO"),
               onPressed: () {
                 Navigator.of(context).pop();
                 if (confirm != null) confirm();
               },
             ),
             FlatButton(
-              child: Text("PARTIDA"),
+              child: Text("NOVA PARTIDA"),
               onPressed: () {
                 Navigator.of(context).pop();
                 if (match != null) match();
