@@ -272,7 +272,7 @@ class _HomePageState extends State<HomePage> {
                   cancel: () {
                     setState(() {
                       player.score--;
-                      if (player.score >= 13){
+                      if (player.score >= 12){
                         player.score = 11;
                       }
                     });
