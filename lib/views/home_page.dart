@@ -12,6 +12,7 @@ class _HomePageState extends State<HomePage> {
   var _playerTwo = Player(name: "Eles", score: 0, victories: 0);
 
 
+
   @override
   void initState() {
     super.initState();
@@ -30,11 +31,13 @@ class _HomePageState extends State<HomePage> {
     _resetPlayer(player: _playerTwo, resetVictories: resetVictories);
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomPadding: false,
       appBar: AppBar(
-        backgroundColor: Colors.deepOrange,
+        backgroundColor: Colors.indigo,
         title: Text("Marcador Pontos (Truco!)"),
         actions: <Widget>[
           IconButton(
@@ -60,13 +63,20 @@ class _HomePageState extends State<HomePage> {
 
   TextEditingController _name = TextEditingController();
 
+
+  void resetFields() {
+    _name.text = '';
+  }
+
+
   Widget _editPlayerName(Player player){
     return GestureDetector(
       onTap: (){
         showDialog(context: context,
             builder: (context){
               return AlertDialog(title: Text("Alterar nome"),
-                  content: TextField(controller: _name),
+                  content: TextField(controller: _name,
+                  decoration: InputDecoration(hintText: "Novo nome")),
                   actions: <Widget>[FlatButton(child: Text("Cancelar"),
                     onPressed: (){
                       Navigator.of(context).pop();
@@ -77,6 +87,7 @@ class _HomePageState extends State<HomePage> {
                           setState((){
                             player.name = _name.text;
                             Navigator.of(context).pop();
+                            resetFields();
                           });
                         }
                     )
@@ -100,7 +111,6 @@ class _HomePageState extends State<HomePage> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           _editPlayerName(player),
-          //_showPlayerName(player.name),
           _showPlayerScore(player.score),
           _showPlayerVictories(player.victories),
           _showScoreButtons(player),
@@ -127,7 +137,7 @@ class _HomePageState extends State<HomePage> {
       style: TextStyle(
           fontSize: 20.0,
           fontWeight: FontWeight.w500,
-          color: Colors.deepOrange),
+          color: Colors.indigoAccent),
     );
   }
 
@@ -184,7 +194,7 @@ class _HomePageState extends State<HomePage> {
         ),
         _buildRoundedButton(
           text: '+1',
-          color: Colors.deepOrangeAccent,
+          color: Colors.indigoAccent,
           onTap: () {
             if (player.score < 12)
               setState(() {
@@ -199,6 +209,44 @@ class _HomePageState extends State<HomePage> {
               }
 
             if (player.score == 12) {
+              _showDialog(
+                  title: 'Fim do jogo',
+                  message: '${player.name} ganhou!',
+                  match: () {
+                    setState(() {
+                      player.victories++;
+                    });
+
+                    _resetPlayers(resetVictories: false);
+                  },
+                  confirm: () {
+                    _resetPlayers(resetVictories: true);
+                  },
+                  cancel: () {
+                    setState(() {
+                      player.score--;
+                    });
+                  });
+            }
+          },
+        ),
+        _buildRoundedButton(
+          text: '+3',
+          color: Colors.black.withOpacity(0.5),
+          onTap: () {
+            if (player.score < 12)
+              setState(() {
+                player.score=player.score+3;
+              });
+
+            if (_playerOne.score == 11 && _playerTwo.score == 11){
+              _showIronhand(
+                  title: 'Mão de Ferro.',
+                  message: 'que vença o melhor!'
+              );
+            }
+
+            if (player.score >= 12) {
               _showDialog(
                   title: 'Fim do jogo',
                   message: '${player.name} ganhou!',
