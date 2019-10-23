@@ -11,6 +11,7 @@ class _HomePageState extends State<HomePage> {
   var _playerOne = Player(name: "Nós", score: 0, victories: 0);
   var _playerTwo = Player(name: "Eles", score: 0, victories: 0);
 
+
   @override
   void initState() {
     super.initState();
@@ -57,7 +58,39 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  //TextEditingController _weightController = TextEditingController();
+  TextEditingController _name = TextEditingController();
+
+  Widget _editPlayerName(Player player){
+    return GestureDetector(
+      onTap: (){
+        showDialog(context: context,
+            builder: (context){
+              return AlertDialog(title: Text("Alterar nome"),
+                  content: TextField(controller: _name),
+                  actions: <Widget>[FlatButton(child: Text("Cancelar"),
+                    onPressed: (){
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                    FlatButton(child: Text("Ok"),
+                        onPressed: (){
+                          setState((){
+                            player.name = _name.text;
+                            Navigator.of(context).pop();
+                          });
+                        }
+                    )
+                  ]
+              );
+            }
+        );
+      },
+      child: Container(
+          child: _showPlayerName(player.name)
+      ),
+    );
+  }
+
 
   Widget _showPlayerBoard(Player player) {
     return Expanded(
@@ -66,7 +99,8 @@ class _HomePageState extends State<HomePage> {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          _showPlayerName(player.name),
+          _editPlayerName(player),
+          //_showPlayerName(player.name),
           _showPlayerScore(player.score),
           _showPlayerVictories(player.victories),
           _showScoreButtons(player),
