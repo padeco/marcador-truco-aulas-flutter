@@ -90,9 +90,11 @@ class _HomePageState extends State<HomePage> {
                           setState((){
                             player.name = _name.text;
                             Navigator.of(context).pop();
-                            if (_name.text == ''){
-                              player.name= "NOME";
-                            
+                            if (_playerOne.name == '' && _name.text == ''){
+                              player.name= "Nós";
+                            }
+                            if (_playerTwo.name == '' && _name.text == ''){
+                              player.name= "eles";
                             }
                             _resetFields();
                           });
